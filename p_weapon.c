@@ -799,6 +799,12 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 	vec3_t	forward, right;
 	vec3_t	start;
 	vec3_t	offset;
+	float	damage_radius;
+	int		radius_damage;
+
+	damage = 100 + (int)(random() * 20.0);
+	radius_damage = 120;
+	damage_radius = 120;
 
 	if (is_quad)
 		damage *= 4;
@@ -810,18 +816,19 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 	VectorScale (forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -1;
 
-	fire_blaster (ent, start, forward, damage, 1000, effect, hyper);
+	//fire_blaster (ent, start, forward, damage, 1000, effect, hyper);
+	fire_rocket (ent, start, forward, damage, 650, damage_radius, radius_damage);
 
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);
 	gi.WriteShort (ent-g_edicts);
 	if (hyper)
-		gi.WriteByte (MZ_HYPERBLASTER | is_silenced);
+		gi.WriteByte (MZ_ROCKET | is_silenced);
 	else
 		gi.WriteByte (MZ_BLASTER | is_silenced);
 	gi.multicast (ent->s.origin, MULTICAST_PVS);
 
-	PlayerNoise(ent, start, PNOISE_WEAPON);
+	//PlayerNoise(ent, start, PNOISE_WEAPON);
 }
 
 
@@ -843,17 +850,23 @@ void Weapon_Blaster (edict_t *ent)
 	static int	fire_frames[]	= {5, 0};
 
 	Weapon_Generic (ent, 4, 8, 52, 55, pause_frames, fire_frames, Weapon_Blaster_Fire);
+	
 }
 
 
 void Weapon_HyperBlaster_Fire (edict_t *ent)
 {
+	vec3_t	offset, start;
+	vec3_t	forward, right;
+	float	radius;
 	float	rotation;
-	vec3_t	offset;
+	//vec3_t	offset;
 	int		effect;
 	int		damage;
 
-	ent->client->weapon_sound = gi.soundindex("weapons/hyprbl1a.wav");
+
+	//ent->client->weapon_sound = gi.soundindex("weapons/hyprbl1a.wav");
+	PlayerNoise(ent, start, PNOISE_WEAPON);
 
 	if (!(ent->client->buttons & BUTTON_ATTACK))
 	{
@@ -886,6 +899,7 @@ void Weapon_HyperBlaster_Fire (edict_t *ent)
 			else
 				damage = 20;
 			Blaster_Fire (ent, offset, damage, true, effect);
+			
 			if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
 				ent->client->pers.inventory[ent->client->ammo_index]--;
 
@@ -909,7 +923,7 @@ void Weapon_HyperBlaster_Fire (edict_t *ent)
 
 	if (ent->client->ps.gunframe == 12)
 	{
-		gi.sound(ent, CHAN_AUTO, gi.soundindex("weapons/hyprbd1a.wav"), 1, ATTN_NORM, 0);
+		//gi.sound(ent, CHAN_AUTO, gi.soundindex("weapons/hyprbd1a.wav"), 1, ATTN_NORM, 0);
 		ent->client->weapon_sound = 0;
 	}
 

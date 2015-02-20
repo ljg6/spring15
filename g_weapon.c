@@ -32,7 +32,7 @@ static void check_dodge (edict_t *self, vec3_t start, vec3_t dir, int speed)
 		tr.ent->monsterinfo.dodge (tr.ent, self, eta);
 	}
 }
-
+//comment
 
 /*
 =================
@@ -347,8 +347,10 @@ void fire_blaster (edict_t *self, vec3_t start, vec3_t dir, int damage, int spee
 	bolt->s.effects |= effect;
 	VectorClear (bolt->mins);
 	VectorClear (bolt->maxs);
-	bolt->s.modelindex = gi.modelindex ("models/objects/laser/tris.md2");
-	bolt->s.sound = gi.soundindex ("misc/lasfly.wav");
+	//bolt->s.modelindex = gi.modelindex ("models/objects/rocket/tris.md2");
+	//bolt->s.sound = gi.soundindex ("weapons/rockfly.wav");
+	//bolt->s.modelindex = gi.modelindex ("models/objects/laser/tris.md2");
+	//bolt->s.sound = gi.soundindex ("misc/lasfly.wav");
 	bolt->owner = self;
 	bolt->touch = blaster_touch;
 	bolt->nextthink = level.time + 2;
@@ -357,6 +359,8 @@ void fire_blaster (edict_t *self, vec3_t start, vec3_t dir, int damage, int spee
 	bolt->classname = "bolt";
 	if (hyper)
 		bolt->spawnflags = 1;
+
+
 	gi.linkentity (bolt);
 
 	if (self->client)
