@@ -140,7 +140,7 @@ void SetRespawn (edict_t *ent, float delay)
 qboolean Pickup_Powerup (edict_t *ent, edict_t *other)
 {
 	int		quantity;
-
+	return false;
 	quantity = other->client->pers.inventory[ITEM_INDEX(ent->item)];
 	if ((skill->value == 1 && quantity >= 2) || (skill->value >= 2 && quantity >= 1))
 		return false;
@@ -177,6 +177,7 @@ void Drop_General (edict_t *ent, gitem_t *item)
 
 qboolean Pickup_Adrenaline (edict_t *ent, edict_t *other)
 {
+	return false;
 	if (!deathmatch->value)
 		other->max_health += 1;
 
@@ -203,7 +204,7 @@ qboolean Pickup_Bandolier (edict_t *ent, edict_t *other)
 {
 	gitem_t	*item;
 	int		index;
-
+	return false;
 	if (other->client->pers.max_bullets < 250)
 		other->client->pers.max_bullets = 250;
 	if (other->client->pers.max_shells < 150)
@@ -241,7 +242,7 @@ qboolean Pickup_Pack (edict_t *ent, edict_t *other)
 {
 	gitem_t	*item;
 	int		index;
-
+	return false;
 	if (other->client->pers.max_bullets < 300)
 		other->client->pers.max_bullets = 300;
 	if (other->client->pers.max_shells < 200)
@@ -466,7 +467,7 @@ qboolean Pickup_Ammo (edict_t *ent, edict_t *other)
 	int			oldcount;
 	int			count;
 	qboolean	weapon;
-
+	return false;
 	weapon = (ent->item->flags & IT_WEAPON);
 	if ( (weapon) && ( (int)dmflags->value & DF_INFINITE_AMMO ) )
 		count = 1000;
@@ -539,7 +540,7 @@ qboolean Pickup_Health (edict_t *ent, edict_t *other)
 	if (!(ent->style & HEALTH_IGNORE_MAX))
 		if (other->health >= other->max_health)
 			return false;
-
+	return false;
 	other->health += ent->count;
 
 	if (!(ent->style & HEALTH_IGNORE_MAX))
@@ -593,7 +594,7 @@ qboolean Pickup_Armor (edict_t *ent, edict_t *other)
 	int				newcount;
 	float			salvage;
 	int				salvagecount;
-
+	return false;
 	// get info on new armor
 	newinfo = (gitem_armor_t *)ent->item->info;
 
@@ -708,7 +709,7 @@ void Use_PowerArmor (edict_t *ent, gitem_t *item)
 qboolean Pickup_PowerArmor (edict_t *ent, edict_t *other)
 {
 	int		quantity;
-
+	return false;
 	quantity = other->client->pers.inventory[ITEM_INDEX(ent->item)];
 
 	other->client->pers.inventory[ITEM_INDEX(ent->item)]++;

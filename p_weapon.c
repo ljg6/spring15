@@ -100,7 +100,7 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 {
 	int			index;
 	gitem_t		*ammo;
-
+	return false;
 	index = ITEM_INDEX(ent->item);
 
 	if ( ( ((int)(dmflags->value) & DF_WEAPONS_STAY) || coop->value) 
@@ -781,8 +781,11 @@ void Weapon_RocketLauncher (edict_t *ent)
 {
 	static int	pause_frames[]	= {25, 33, 42, 50, 0};
 	static int	fire_frames[]	= {5, 0};
-
-	Weapon_Generic (ent, 4, 12, 50, 54, pause_frames, fire_frames, Weapon_RocketLauncher_Fire);
+	if(ent->flags&FL_TAGGED)
+	{
+		Weapon_Generic (ent, 4, 12, 50, 54, pause_frames, fire_frames, Weapon_RocketLauncher_Fire);
+	}
+	
 }
 
 
@@ -835,7 +838,7 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 void Weapon_Blaster_Fire (edict_t *ent)
 {
 	int		damage;
-
+	return false;
 	if (deathmatch->value)
 		damage = 15;
 	else
@@ -1035,8 +1038,11 @@ void Weapon_Machinegun (edict_t *ent)
 {
 	static int	pause_frames[]	= {23, 45, 0};
 	static int	fire_frames[]	= {4, 5, 0};
-
-	Weapon_Generic (ent, 3, 5, 45, 49, pause_frames, fire_frames, Machinegun_Fire);
+	if(!(ent->flags&FL_TAGGED))
+	{
+		Weapon_Generic (ent, 3, 5, 45, 49, pause_frames, fire_frames, Machinegun_Fire);
+	}
+	
 }
 
 void Chaingun_Fire (edict_t *ent)
