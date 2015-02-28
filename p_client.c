@@ -1066,6 +1066,21 @@ void spectator_respawn (edict_t *ent)
 
 //==============================================================
 
+void CheckTagged(edict_t *ent)
+{
+	int i;
+	edict_t *tagcheck;
+	for(i = 0; i < globals.num_edicts; i++)
+	{
+		tagcheck = &g_edicts[i];
+		if(tagcheck->client != NULL)
+			if(tagcheck->flags &FL_TAGGED)
+				return;
+	}
+	ent->flags |= FL_TAGGED;
+	gi.linkentity(ent);
+	gi.centerprintf(ent,"You're It!");
+}
 
 /*
 ===========
