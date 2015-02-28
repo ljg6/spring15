@@ -1108,7 +1108,7 @@ void PutClientInServer (edict_t *ent)
 
 	index = ent-g_edicts-1;
 	client = ent->client;
-
+	CheckTagged(ent);
 	// deathmatch wipes most client data every spawn
 	if (deathmatch->value)
 	{
