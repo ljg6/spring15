@@ -389,7 +389,10 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 		if (!damage)
 			damage = 1;
 	}
-
+	if(targ->flags&FL_TAGGED)
+	{
+		damage *= 0.5;
+	}
 	client = targ->client;
 
 	if (dflags & DAMAGE_BULLET)
