@@ -880,7 +880,27 @@ void Cmd_PlayerList_f(edict_t *ent)
 	gi.cprintf(ent, PRINT_HIGH, "%s", text);
 }
 
+/*void ITplayerStats(edict_t *ent)
+{
+	int armor;
+	int health;
+	int ammo;
+}
 
+void PowerUpHealth(edict_t *ent)
+{
+	int health;
+}
+
+void PowerUpArmor(edict_t *ent)
+{
+	int armor;
+}
+
+void PowerUpTeleport(edict_t *ent)
+{
+	//Moves player to another area on map?
+}*/
 /*
 =================
 ClientCommand

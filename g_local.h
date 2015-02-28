@@ -48,6 +48,7 @@
 #define	FL_TEAMSLAVE			0x00000400	// not the first on the team
 #define FL_NO_KNOCKBACK			0x00000800
 #define FL_POWER_ARMOR			0x00001000	// power armor (if any) is active
+#define FL_TAGGED				0x00002000  // YOU ARE IT!
 #define FL_RESPAWN				0x80000000	// used for item respawning
 
 
