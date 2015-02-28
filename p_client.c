@@ -1078,6 +1078,7 @@ void CheckTagged(edict_t *ent)
 				return;
 	}
 	ent->flags |= FL_TAGGED;
+	ent->max_health = 250;
 	gi.linkentity(ent);
 	gi.centerprintf(ent,"You're It!");
 }
