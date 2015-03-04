@@ -597,8 +597,8 @@ void InitClientPersistant (gclient_t *client)
 
 	client->pers.weapon = item;
 
-	client->pers.health			= 100;
-	client->pers.max_health		= 100;
+	client->pers.health			= 250;
+	client->pers.max_health		= 250;
 
 	client->pers.max_bullets	= 200;
 	client->pers.max_shells		= 100;
@@ -1069,18 +1069,49 @@ void spectator_respawn (edict_t *ent)
 void CheckTagged(edict_t *ent)
 {
 	int i;
+	int index;
+	gitem_t *item;
 	edict_t *tagcheck;
 	for(i = 0; i < globals.num_edicts; i++)
 	{
 		tagcheck = &g_edicts[i];
-		if(tagcheck->client != NULL)
-			if(tagcheck->flags &FL_TAGGED)
-				return;
+		if (!tagcheck->inuse)continue;
+		if(tagcheck->client == NULL)
+		{
+			continue;
+		}
+		if (tagcheck == ent)continue;
+		if(tagcheck->flags & FL_TAGGED){
+			//gi.centerprintf(ent,"you are not it");
+			//mahine gun
+			ent->client->pers.max_health = 100;
+			index =9;
+			item = FindItem("Machinegun");
+			ent->client->pers.selected_item = ITEM_INDEX(item);
+			ent->client->pers.inventory[ent->client->pers.selected_item] = 1;
+			//ent->client->pers.inventory[index] = 1;
+			//Add_Ammo (ent, &itemlist[18], 1000);
+			//ent->client->newweapon = &itemlist[index];
+			return;
+		}
 	}
 	ent->flags |= FL_TAGGED;
-	ent->max_health = 250;
+	ent->client->pers.health = 250;
+	//rockets
+	index = 14;
+	item = FindItem("Rocket Launcher");
+	if(item == NULL)
+	{
+		gi.centerprintf(ent,"NULL");
+	}
+	ent->client->pers.selected_item = ITEM_INDEX(item);
+	ent->client->pers.inventory[ent->client->pers.selected_item] = 1;
+	//ent->client->pers.inventory[index]=1;
+	//Add_Ammo (ent, &itemlist[21], 1000);
+	//ent->client->newweapon = &itemlist[index];
 	gi.linkentity(ent);
-	gi.centerprintf(ent,"You're It!");
+	//gi.centerprintf(ent,"You're It!");
+	//gi.centerprintf(ent,"inv = %d",ent->client->pers.inventory[index]);
 }
 
 /*
