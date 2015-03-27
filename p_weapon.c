@@ -100,9 +100,12 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 {
 	int			index;
 	gitem_t		*ammo;
-	return false;
+	
 	index = ITEM_INDEX(ent->item);
-
+	if(index != 8 && index != 9 && index != 11 && index != 13 && index != 16 && index != 23)
+	{
+		return false;
+	}
 	if ( ( ((int)(dmflags->value) & DF_WEAPONS_STAY) || coop->value) 
 		&& other->client->pers.inventory[index])
 	{
@@ -520,7 +523,7 @@ GRENADE
 ======================================================================
 */
 
-#define GRENADE_TIMER		3.0
+#define GRENADE_TIMER		1.5
 #define GRENADE_MINSPEED	400
 #define GRENADE_MAXSPEED	800
 
@@ -529,14 +532,14 @@ void weapon_grenade_fire (edict_t *ent, qboolean held)
 	vec3_t	offset;
 	vec3_t	forward, right;
 	vec3_t	start;
-	int		damage = 125;
+	int		damage = 0;
 	float	timer;
 	int		speed;
 	float	radius;
 
-	radius = damage+40;
+	radius = 165;
 	if (is_quad)
-		damage *= 4;
+		damage *= 8;
 
 	VectorSet(offset, 8, 8, ent->viewheight-8);
 	AngleVectors (ent->client->v_angle, forward, right, NULL);

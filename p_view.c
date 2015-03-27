@@ -768,6 +768,11 @@ void G_SetClientEffects (edict_t *ent)
 		ent->s.effects |= EF_COLOR_SHELL;
 		ent->s.renderfx |= (RF_SHELL_RED|RF_SHELL_GREEN|RF_SHELL_BLUE);
 	}
+	if (ent->flags & FL_TAGGED)
+	{
+		ent->s.effects |= EF_COLOR_SHELL | EF_GIB | EF_BLASTER;
+		ent->s.renderfx |= (RF_SHELL_RED);
+	}
 }
 
 

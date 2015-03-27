@@ -140,7 +140,7 @@ void SetRespawn (edict_t *ent, float delay)
 qboolean Pickup_Powerup (edict_t *ent, edict_t *other)
 {
 	int		quantity;
-	return false;
+	//return false;
 	quantity = other->client->pers.inventory[ITEM_INDEX(ent->item)];
 	if ((skill->value == 1 && quantity >= 2) || (skill->value >= 2 && quantity >= 1))
 		return false;
@@ -467,7 +467,15 @@ qboolean Pickup_Ammo (edict_t *ent, edict_t *other)
 	int			oldcount;
 	int			count;
 	qboolean	weapon;
-	return false;
+	int index;
+	index = ITEM_INDEX(ent->item);
+	//return false;
+
+	if(index != 12)
+	{
+		return false;
+	}
+
 	weapon = (ent->item->flags & IT_WEAPON);
 	if ( (weapon) && ( (int)dmflags->value & DF_INFINITE_AMMO ) )
 		count = 1000;
@@ -1340,7 +1348,7 @@ always owned, never in the world
 /*QUAKED weapon_machinegun (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_machinegun", 
+		"unused", 
 		Pickup_Weapon,
 		Use_Weapon,
 		Drop_Weapon,
@@ -1396,8 +1404,8 @@ always owned, never in the world
 		"models/weapons/v_handgr/tris.md2",
 /* icon */		"a_grenades",
 /* pickup */	"Grenades",
-/* width */		3,
-		5,
+/* width */		1,
+		1,
 		"grenades",
 		IT_AMMO|IT_WEAPON,
 		WEAP_GRENADES,
@@ -1647,7 +1655,7 @@ always owned, never in the world
 /*QUAKED item_quad (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"item_quad", 
+		"weapon_machinegun", 
 		Pickup_Powerup,
 		Use_Quad,
 		Drop_General,

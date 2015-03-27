@@ -942,6 +942,8 @@ struct gclient_s
 
 	edict_t		*chase_target;		// player we are chasing
 	qboolean	update_chase;		// need to update chase info?
+
+	float ClassSpeed;
 };
 
 
@@ -1036,6 +1038,7 @@ struct edict_s
 
 	int			health;
 	int			max_health;
+
 	int			gib_health;
 	int			deadflag;
 	qboolean	show_hostile;

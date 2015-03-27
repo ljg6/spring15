@@ -594,22 +594,84 @@ void InitClientPersistant (gclient_t *client)
 	item = FindItem("Blaster");
 	client->pers.selected_item = ITEM_INDEX(item);
 	client->pers.inventory[client->pers.selected_item] = 1;
+	//gi.dprintf(pers."inv = %d",ent->client->flags->FL_TAGGED);
 
 	client->pers.weapon = item;
 
-	client->pers.health			= 250;
+	client->pers.health			= 100;
 	client->pers.max_health		= 250;
+	
 
-	client->pers.max_bullets	= 200;
+	client->pers.max_bullets	= 5000;
 	client->pers.max_shells		= 100;
-	client->pers.max_rockets	= 50;
-	client->pers.max_grenades	= 50;
+	client->pers.max_rockets	= 5000;
+	client->pers.max_grenades	= 1;
 	client->pers.max_cells		= 200;
 	client->pers.max_slugs		= 50;
 
 	client->pers.connected = true;
 }
 
+void CheckTagged(edict_t *ent)
+{
+	int i;
+	int index;
+	gitem_t *item;
+	edict_t *tagcheck;
+	//gi.centerprintf(ent->owner,"inv = %d",ent->client->flags->FL_TAGGED);
+	for(i = 0; i < globals.num_edicts; i++)
+	{
+		tagcheck = &g_edicts[i];
+		if (!tagcheck->inuse)continue;
+		if(tagcheck->client == NULL)
+		{
+			continue;
+		}
+		if (tagcheck == ent)continue;
+		if(tagcheck->flags & FL_TAGGED)
+		{
+			gi.centerprintf(ent,"RUN!");
+			//machine gun
+			ent->client->pers.health = 100;
+			ent->client->pers.max_health = 100;
+			ent->gravity = 1; 
+			ent->client->ClassSpeed = 0.5;
+			item = FindItem("Machinegun");
+			ent->client->pers.selected_item = ITEM_INDEX(item);
+			ent->client->pers.inventory[ent->client->pers.selected_item] = 1;
+			ent->client->newweapon = item;
+			item = FindItem(item->ammo);
+			ent->client->pers.inventory[ITEM_INDEX(item)] = 5000;
+			gi.linkentity(ent);
+			return;
+		}
+	/*	else
+		{
+
+		}*/
+
+	}
+		ent->flags |= FL_TAGGED;
+		ent->client->pers.health = 250;
+		ent->client->pers.max_health = 250;
+		ent->health = 250;
+		ent->max_health = ent->health;
+		ent->gravity = 20; 
+		ent->client->ClassSpeed = 0.65;
+		//rockets
+		item = FindItem("Rocket Launcher");
+		ent->client->pers.selected_item = ITEM_INDEX(item);
+		ent->client->pers.inventory[ent->client->pers.selected_item] = 1;
+		ent->client->newweapon = item;
+		item = FindItem(item->ammo);
+		ent->client->pers.inventory[ITEM_INDEX(item)] = 5000;
+		//Add_Ammo (ent, &itemlist[21], 1000);
+		//ent->client->newweapon = &itemlist[index];
+		gi.linkentity(ent);
+		gi.centerprintf(ent,"You're It!");
+		//gi.centerprintf(ent,"inv = %d",ent->client->pers.inventory[index]);
+
+}
 
 void InitClientResp (gclient_t *client)
 {
@@ -1066,53 +1128,7 @@ void spectator_respawn (edict_t *ent)
 
 //==============================================================
 
-void CheckTagged(edict_t *ent)
-{
-	int i;
-	int index;
-	gitem_t *item;
-	edict_t *tagcheck;
-	for(i = 0; i < globals.num_edicts; i++)
-	{
-		tagcheck = &g_edicts[i];
-		if (!tagcheck->inuse)continue;
-		if(tagcheck->client == NULL)
-		{
-			continue;
-		}
-		if (tagcheck == ent)continue;
-		if(tagcheck->flags & FL_TAGGED){
-			//gi.centerprintf(ent,"you are not it");
-			//mahine gun
-			ent->client->pers.max_health = 100;
-			index =9;
-			item = FindItem("Machinegun");
-			ent->client->pers.selected_item = ITEM_INDEX(item);
-			ent->client->pers.inventory[ent->client->pers.selected_item] = 1;
-			//ent->client->pers.inventory[index] = 1;
-			//Add_Ammo (ent, &itemlist[18], 1000);
-			//ent->client->newweapon = &itemlist[index];
-			return;
-		}
-	}
-	ent->flags |= FL_TAGGED;
-	ent->client->pers.health = 250;
-	//rockets
-	index = 14;
-	item = FindItem("Rocket Launcher");
-	if(item == NULL)
-	{
-		gi.centerprintf(ent,"NULL");
-	}
-	ent->client->pers.selected_item = ITEM_INDEX(item);
-	ent->client->pers.inventory[ent->client->pers.selected_item] = 1;
-	//ent->client->pers.inventory[index]=1;
-	//Add_Ammo (ent, &itemlist[21], 1000);
-	//ent->client->newweapon = &itemlist[index];
-	gi.linkentity(ent);
-	//gi.centerprintf(ent,"You're It!");
-	//gi.centerprintf(ent,"inv = %d",ent->client->pers.inventory[index]);
-}
+
 
 /*
 ===========
@@ -1140,7 +1156,6 @@ void PutClientInServer (edict_t *ent)
 
 	index = ent-g_edicts-1;
 	client = ent->client;
-	CheckTagged(ent);
 	// deathmatch wipes most client data every spawn
 	if (deathmatch->value)
 	{
@@ -1282,6 +1297,8 @@ void PutClientInServer (edict_t *ent)
 
 	// force the current weapon up
 	client->newweapon = client->pers.weapon;
+	CheckTagged(ent);
+
 	ChangeWeapon (ent);
 }
 
@@ -1611,6 +1628,70 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	edict_t	*other;
 	int		i, j;
 	pmove_t	pm;
+
+	float ClassSpeedModifer, t;
+  vec3_t velo;
+  vec3_t  end, forward, right, up, add;
+
+  ClassSpeedModifer = ent->client->ClassSpeed * 0.2;
+  //gi.cprintf(ent,PRINT_HIGH,"Class speed %f\n" , ent->client->ClassSpeed);
+  //Figure out speed
+    VectorClear (velo);
+  AngleVectors (ent->client->v_angle, forward, right, up);
+  VectorScale(forward, ucmd->forwardmove*ClassSpeedModifer, end);
+  VectorAdd(end,velo,velo);
+  AngleVectors (ent->client->v_angle, forward, right, up);
+  VectorScale(right, ucmd->sidemove*ClassSpeedModifer, end);
+  VectorAdd(end,velo,velo);
+  //if not in water set it up so they aren&#39;t moving up or down when they press forward
+  if (ent->waterlevel == 0)
+    velo[2] = 0;
+  if (ent->waterlevel==1)//feet are in the water
+  {
+    //Water slows you down or at least I think it should
+    velo[0] *= 0.875;
+    velo[1] *= 0.875;
+    velo[2] *= 0.875;
+    ClassSpeedModifer *= 0.875;
+  }
+  else if (ent->waterlevel==2)//waist is in the water
+  {
+    //Water slows you down or at least I think it should
+    velo[0] *= 0.75;
+    velo[1] *= 0.75;
+    velo[2] *= 0.75;
+    ClassSpeedModifer *= 0.75;
+  }
+  else if (ent->waterlevel==3)//whole body is in the water
+  {
+      //Water slows you down or at least I think it should
+    velo[0] *= 0.6;
+    velo[1] *= 0.6;
+    velo[2] *= 0.6;
+    ClassSpeedModifer *= 0.6;
+  }
+  if (ent->groundentity)//add
+    VectorAdd(velo,ent->velocity,ent->velocity);
+  else if (ent->waterlevel)
+    VectorAdd(velo,ent->velocity,ent->velocity);
+  else
+  {
+    //Allow for a little movement but not as much
+    velo[0] *= 0.25;
+    velo[1] *= 0.25;
+    velo[2] *= 0.25;
+    VectorAdd(velo,ent->velocity,ent->velocity);
+  }
+  //Make sure not going to fast. This slows down grapple too
+  t = VectorLength(ent->velocity);
+  if (t > 300*ClassSpeedModifer && t < -300*ClassSpeedModifer)
+  {
+    VectorScale (ent->velocity, 300 * ClassSpeedModifer / t, ent->velocity);
+  }
+ 
+  //Set these to 0 so pmove thinks we aren&#39;t pressing forward or sideways since we are handling all the player forward and sideways speeds
+  ucmd->forwardmove = 0;
+  ucmd->sidemove = 0;
 
 	level.current_entity = ent;
 	client = ent->client;

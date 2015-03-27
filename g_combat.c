@@ -1,7 +1,7 @@
 // g_combat.c
 
 #include "g_local.h"
-
+void CheckTagged(edict_t *ent);
 /*
 ============
 CanDamage
@@ -102,8 +102,22 @@ void Killed (edict_t *targ, edict_t *inflictor, edict_t *attacker, int damage, v
 		targ->touch = NULL;
 		monster_death_use (targ);
 	}
+	
 
+
+	attacker->flags &= ~FL_TAGGED;
 	targ->die (targ, inflictor, attacker, damage, point);
+	if(!(targ->flags & FL_TAGGED)&&(attacker !=targ && attacker->client))
+	{
+		//gi.centerprintf(attacker,"test");
+		CheckTagged(targ);
+	
+		attacker->die(attacker,inflictor,attacker,damage,point);
+		CheckTagged(attacker);
+		respawn (attacker);
+		//if(attacker->flags & FL_TAGGED)
+			//respawn (attacker);
+	}
 }
 
 
@@ -367,6 +381,8 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 	if (!targ->takedamage)
 		return;
 
+	if(attacker->client &&!(attacker->flags & FL_TAGGED) && !(targ->flags & FL_TAGGED))
+		return;
 	// friendly fire avoidance
 	// if enabled you can't hurt teammates (but you can hurt yourself)
 	// knockback still occurs
@@ -545,7 +561,16 @@ void T_RadiusDamage (edict_t *inflictor, edict_t *attacker, float damage, edict_
 		VectorAdd (ent->mins, ent->maxs, v);
 		VectorMA (ent->s.origin, 0.5, v, v);
 		VectorSubtract (inflictor->s.origin, v, v);
-		points = damage - 0.5 * VectorLength (v);
+		if(mod == MOD_HG_SPLASH)
+		{
+			points = 600 - 0.5 * VectorLength (v);
+			damage = 0;
+		}
+		else
+		{
+			points = damage - 0.5 * VectorLength (v);
+			damage = points;
+		}
 		if (ent == attacker)
 			points = points * 0.5;
 		if (points > 0)
@@ -553,7 +578,7 @@ void T_RadiusDamage (edict_t *inflictor, edict_t *attacker, float damage, edict_
 			if (CanDamage (ent, inflictor))
 			{
 				VectorSubtract (ent->s.origin, inflictor->s.origin, dir);
-				T_Damage (ent, inflictor, attacker, dir, inflictor->s.origin, vec3_origin, (int)points, (int)points, DAMAGE_RADIUS, mod);
+				T_Damage (ent, inflictor, attacker, dir, inflictor->s.origin, vec3_origin, damage, (int)points, DAMAGE_RADIUS, mod);
 			}
 		}
 	}
